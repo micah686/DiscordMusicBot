@@ -1,6 +1,8 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 
@@ -9,12 +11,32 @@ namespace Yuna.Modules
     public class AudioModule : ModuleBase<SocketCommandContext>
     {
         
+        
         private readonly LavaNode _lavaNode;
         public AudioModule(LavaNode lavaNode)
-            => _lavaNode = lavaNode;
+        {
+            _lavaNode = lavaNode;
+            Instance = this;
+        }
 
         public static bool LoopEnabled { get; set; } = false;
         public static LavaTrack CurrentTrack { get; set; }
+        public static AudioModule Instance { get; private set; }
+        
+        public Tuple<IGuild, ITextChannel, IVoiceState> GetDiscordContext()
+        {
+            try
+            {
+                return new Tuple<IGuild, ITextChannel, IVoiceState>(Context.Guild, (ITextChannel)Context.Channel, (IVoiceState)Context.User);
+            }
+            catch (Exception)
+            {
+
+                return default;
+            }
+            
+        }
+        
 
         // We pass an Audio service task to a section that usually requires embedding, since this is what all audio Service tasks return.
 

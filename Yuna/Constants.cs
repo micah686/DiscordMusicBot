@@ -11,5 +11,10 @@
         public static readonly string EMOJI_X = "❌";
         public static readonly string EMOJI_SHUFFLE = "🔀";
         public static readonly string EMOJI_LOOP = "🔂";
+
+
+        internal static readonly byte[] START_BYTES = new byte[] { 0x00, 0x01,0x02,0x03,0x04,0x05 };
+        internal static readonly byte[] END_BYTES = new byte[] { 0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xFA };
+        internal const string LAUNCHSTATE_FILE = "launchstate";
     }
 }

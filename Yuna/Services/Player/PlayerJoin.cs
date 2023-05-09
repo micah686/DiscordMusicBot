@@ -7,7 +7,6 @@ namespace Yuna.Services.Player
 {
     internal class PlayerJoin
     {        
-
         internal static async Task<Embed> JoinAsync(LavaNode node,IGuild guild, IVoiceState voiceState, ITextChannel textChannel)
         {
             if (node.HasPlayer(guild))
