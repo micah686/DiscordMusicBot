@@ -1,12 +1,6 @@
 ﻿using Discord;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Victoria;
-using Victoria.Enums;
-using Yuna.Data;
 using Yuna.Handlers;
 
 namespace Yuna.Services.Player
@@ -15,7 +9,7 @@ namespace Yuna.Services.Player
     {
         internal static async Task<Embed> StopAsync(LavaNode node, IGuild guild, IVoiceState voiceState)
         {
-            var player = node.GetPlayer(guild);
+            node.TryGetPlayer(guild, out var player);
 
             if (player is null)
                 return await EmbedHandler.ErrorEmbed(Constants.PLAYER_NOT_FOUND);
@@ -27,7 +21,7 @@ namespace Yuna.Services.Player
                 if (player.PlayerState is PlayerState.Playing)
                 {
                     //clear any endless, loop, repeat,... states here
-                    player.Queue.Clear();
+                    player.Vueue.Clear();
                     await player.StopAsync();
                 }
                 await LogService.LogInfoAsync("MUSIC", $"Yuna has stopped playback.");

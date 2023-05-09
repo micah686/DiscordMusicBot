@@ -2,17 +2,13 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using System.Threading.Tasks;
-using Victoria;
-using Yuna.Services;
-using Yuna.Services.Player;
+
 
 namespace Yuna.Modules
 {
     public class AudioModule : ModuleBase<SocketCommandContext>
     {
-        public LavaLinkAudioService AudioService { get; set; }
         
-
         private readonly LavaNode _lavaNode;
         public AudioModule(LavaNode lavaNode)
             => _lavaNode = lavaNode;
@@ -131,29 +127,5 @@ namespace Yuna.Modules
         public async Task Volume(ushort volume) => await ReplyAsync(embed: await PlayerVolume.VolumeAsync(_lavaNode, Context.Guild, Context.User as IVoiceState, volume));
         #endregion
 
-
-
-
-
-
-
-
-
-        
-        
-
-        
-
-        
-
-        
-
-        [Command("looplist", RunMode = RunMode.Async)]
-        [Name("LoopList"), Summary("Loops all list.")]
-        public async Task LoopListAsync()
-            => await ReplyAsync(
-                embed: await AudioService.LoopListAsync(Context.Guild, Context.User as IVoiceState));
-
-        
     }
 }

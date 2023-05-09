@@ -1,11 +1,6 @@
 ﻿using Discord;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Victoria;
-using Victoria.Enums;
 using Yuna.Handlers;
 
 namespace Yuna.Services.Player
@@ -14,7 +9,7 @@ namespace Yuna.Services.Player
     {
         internal static async Task<Embed> ReplayAsync(LavaNode node, IGuild guild)
         {
-            var player = node.GetPlayer(guild);
+            node.TryGetPlayer(guild, out var player);
             if (player.PlayerState != PlayerState.Playing)
             {
                 return await EmbedHandler.ErrorEmbed("⚠️ No song playing");

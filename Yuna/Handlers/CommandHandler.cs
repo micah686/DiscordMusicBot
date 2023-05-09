@@ -3,12 +3,10 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using Yuna.Data;
-using Yuna.Services;
+using Yuna.Managers;
 
 namespace Yuna.Handlers
 {
@@ -51,7 +49,7 @@ namespace Yuna.Handlers
                 return Task.CompletedTask;
 
             // Check that the message has our Prefix
-            if (!message.HasStringPrefix(ConfigData.Config.Prefix, ref argPos))
+            if (!message.HasCharPrefix(ConfigManager.BotConfig.Prefix, ref argPos))
                 return Task.CompletedTask;
 
             // Create the CommandContext for use in modules.

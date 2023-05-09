@@ -1,12 +1,6 @@
 ﻿using Discord;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Victoria;
-using Victoria.Enums;
-using Yuna.Data;
 using Yuna.Handlers;
 
 namespace Yuna.Services.Player
@@ -15,7 +9,7 @@ namespace Yuna.Services.Player
     {
         internal static async Task<Embed> VolumeAsync(LavaNode node, IGuild guild, IVoiceState voiceState, ushort volume)
         {
-            var player = node.GetPlayer(guild);
+            node.TryGetPlayer(guild, out var player);
             if (player.VoiceChannel != voiceState.VoiceChannel || voiceState.VoiceChannel is null)
             {
                 return await EmbedHandler.ErrorEmbed(Constants.USER_NOT_IN_VOICE);
@@ -28,7 +22,7 @@ namespace Yuna.Services.Player
 
             try
             {
-                await player.UpdateVolumeAsync((ushort)volume);
+                await player.SetVolumeAsync(volume);
                 await LogService.LogInfoAsync("MUSIC", $"Bot Volume set to: {volume}");
                 return await EmbedHandler.BasicEmbed("", $"🔊 Bot Volume set to: {volume}.", Color.Default);
             }

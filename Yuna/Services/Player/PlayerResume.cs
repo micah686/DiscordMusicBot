@@ -1,11 +1,6 @@
 ﻿using Discord;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Victoria;
-using Victoria.Enums;
 using Yuna.Handlers;
 
 namespace Yuna.Services.Player
@@ -14,7 +9,7 @@ namespace Yuna.Services.Player
     {
         internal static async Task<Embed> ResumeAsync(LavaNode node, IGuild guild, IVoiceState voiceState)
         {
-            var player = node.GetPlayer(guild);
+            node.TryGetPlayer(guild, out var player);
             if (player.VoiceChannel != voiceState.VoiceChannel || voiceState.VoiceChannel is null)
             {
                 return await EmbedHandler.ErrorEmbed(Constants.USER_NOT_IN_VOICE);

@@ -1,14 +1,10 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Victoria;
-using Victoria.Enums;
 using Yuna.Handlers;
+using Victoria.Responses.Search;
 
 namespace Yuna.Services.Player
 {
@@ -29,13 +25,13 @@ namespace Yuna.Services.Player
 
             try
             {
-                var player = node.GetPlayer(guild);
+                node.TryGetPlayer(guild, out var player);
 
                 var search = Uri.IsWellFormedUriString(query, UriKind.Absolute) ?
-                await node.SearchAsync(query)
-                    : await node.SearchYouTubeAsync(query);
-
-                if (search.LoadStatus == LoadStatus.NoMatches)
+                await node.SearchAsync(Victoria.Responses.Search.SearchType.Direct,query)
+                    : await node.SearchAsync(Victoria.Responses.Search.SearchType.YouTube,query);
+                
+                if (search.Status == SearchStatus.NoMatches)
                 {
                     return await EmbedHandler.ErrorEmbed($"⚠️ I wasn't able to find anything for \"{query}\".");
                 }
@@ -46,7 +42,7 @@ namespace Yuna.Services.Player
                 //        track = search.Tracks.ElementAt(trackNumber);
                 //        if (player.Track != null && player.PlayerState is PlayerState.Playing || player.PlayerState is PlayerState.Paused)
                 //        {
-                //            player.Queue.Enqueue(track);
+                //            player.Vueue.Enqueue(track);
                 //        }
                 //        else
                 //        {
@@ -56,7 +52,7 @@ namespace Yuna.Services.Player
                 //            }
                 //            else
                 //            {
-                //                player.Queue.Enqueue(track);
+                //                player.Vueue.Enqueue(track);
                 //            }
                 //        }
                 //    }
@@ -68,7 +64,7 @@ namespace Yuna.Services.Player
 
                     if (player.Track != null && player.PlayerState is PlayerState.Playing || player.PlayerState is PlayerState.Paused)
                     {
-                        player.Queue.Enqueue(track);
+                        player.Vueue.Enqueue(track);
                         await LogService.LogInfoAsync("MUSIC", $"\"{track.Title}\" has been added to the music queue.");
                         return await EmbedHandler.BasicEmbed("🎵 Music", $"\"{track.Title}\" has been added to the music queue.", Color.Green);
                     }

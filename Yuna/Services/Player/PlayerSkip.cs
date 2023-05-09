@@ -1,11 +1,6 @@
 ﻿using Discord;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Victoria;
-using Yuna.Data;
 using Yuna.Handlers;
 
 namespace Yuna.Services.Player
@@ -14,7 +9,7 @@ namespace Yuna.Services.Player
     {
         internal static async Task<Embed> SkipAsync(LavaNode node, IGuild guild, IVoiceState voiceState)
         {
-            var player = node.GetPlayer(guild);
+            node.TryGetPlayer(guild, out var player);
             var сurrenttrack = player.Track;
             if (player.VoiceChannel != voiceState.VoiceChannel || voiceState.VoiceChannel is null)
             {
@@ -23,7 +18,7 @@ namespace Yuna.Services.Player
 
             try
             {
-                if (player.Queue.Count < 1) return await EmbedHandler.ErrorEmbed($"⚠️ Unable To skip a track as there is only one or no songs currently playing.");
+                if (player.Vueue.Count < 1) return await EmbedHandler.ErrorEmbed($"⚠️ Unable To skip a track as there is only one or no songs currently playing.");
                 try
                 {
                     await player.SkipAsync();

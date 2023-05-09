@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using System.Threading.Tasks;
 using Yuna.Data;
 using Yuna.Handlers;
+using Yuna.Managers;
 
 namespace Yuna.Modules
 {
@@ -19,7 +20,7 @@ namespace Yuna.Modules
                 "**General:**\n" +
                 "help - Shows a list of all commands.\n " +
                 "delete, clean - Removes messages in a channel.\n " + 
-                $"Prefix: {ConfigData.Config.Prefix}\n\n" +
+                $"Prefix: {ConfigManager.BotConfig.Prefix}\n\n" +
                 "**Music:**\n" +
                 "join - Connects a bot to a voice channel.\n " +
                 "leave - Disconnects the bot from the voice channel.\n " +

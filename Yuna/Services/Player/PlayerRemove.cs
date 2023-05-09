@@ -1,10 +1,6 @@
 ﻿using Discord;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Victoria;
 using Yuna.Handlers;
 
 namespace Yuna.Services.Player
@@ -13,17 +9,17 @@ namespace Yuna.Services.Player
     {
         internal static async Task<Embed> RemoveAsync(LavaNode node, IGuild guild, IVoiceState voiceState, ushort index)
         {
-            var player = node.GetPlayer(guild);
+            node.TryGetPlayer(guild, out var player);
             if (player.VoiceChannel != voiceState.VoiceChannel || voiceState.VoiceChannel is null)
             {
                 return await EmbedHandler.ErrorEmbed(Constants.USER_NOT_IN_VOICE);
             }
 
-            if(index > player.Queue.Count) return await EmbedHandler.ErrorEmbed("⚠️ Index not in range of playlist entries");
+            if(index > player.Vueue.Count) return await EmbedHandler.ErrorEmbed("⚠️ Index not in range of playlist entries");
 
             try
             {
-                var trackToRemove = player.Queue.RemoveAt(index);
+                var trackToRemove = player.Vueue.RemoveAt(index);
                 await LogService.LogInfoAsync("MUSIC", $"Removed {trackToRemove.Title} from queue");
                 return await EmbedHandler.BasicEmbed("", $"❌ Removed \"{trackToRemove.Title}\" from queue.", Color.Default);
             }

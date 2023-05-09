@@ -1,10 +1,6 @@
 ﻿using Discord;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Victoria;
 using Yuna.Handlers;
 
 namespace Yuna.Services.Player
@@ -16,7 +12,7 @@ namespace Yuna.Services.Player
         {
             if (node.HasPlayer(guild))
             {
-                var player = node.GetPlayer(guild);
+                node.TryGetPlayer(guild, out var player);
                 if (player.VoiceChannel == voiceState.VoiceChannel)
                 {
                     return await EmbedHandler.ErrorEmbed("⚠️ I'm already connected to the voice channel!");

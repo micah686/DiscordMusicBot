@@ -1,11 +1,5 @@
 ﻿using Discord;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Victoria;
-using Victoria.Enums;
 using Yuna.Handlers;
 using Yuna.Helpers;
 
@@ -20,7 +14,7 @@ namespace Yuna.Services.Player
                 return await EmbedHandler.ErrorEmbed(Constants.PLAYER_NOT_FOUND);
             }
 
-            var player = node.GetPlayer(guild);
+            node.TryGetPlayer(guild, out var player);
 
             if (player.PlayerState is not (PlayerState.Playing or PlayerState.Paused))
             {
