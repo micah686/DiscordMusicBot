@@ -23,7 +23,7 @@ namespace Yuna.Services.Player
             try
             {
                 await player.SetVolumeAsync(volume);
-                await LogService.LogInfoAsync("MUSIC", $"Bot Volume set to: {volume}");
+                LoggingService.Log($"Bot Volume set to: {volume}", Spectre.Console.Color.Gold1, true);
                 return await EmbedHandler.BasicEmbed("", $"🔊 Bot Volume set to: {volume}.", Color.Default);
             }
             catch (InvalidOperationException ex)

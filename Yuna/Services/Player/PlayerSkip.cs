@@ -22,7 +22,7 @@ namespace Yuna.Services.Player
                 try
                 {
                     await player.SkipAsync();
-                    await LogService.LogInfoAsync("MUSIC", $"Skipped: \"{сurrenttrack.Title}\"");
+                    LoggingService.Log($"Skipped: \"{сurrenttrack.Title}\"", Spectre.Console.Color.Gold1, true);
                     return await EmbedHandler.BasicEmbed("", $"⏭️ Skipped: \"{сurrenttrack.Title}\".", Color.Default);
                 }
                 catch (Exception ex)

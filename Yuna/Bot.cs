@@ -7,6 +7,10 @@ using Victoria.Node;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using Yuna.Managers;
+using Spectre.Console;
+using System;
+using Yuna.Services;
+using Color = Spectre.Console.Color;
 
 namespace Yuna
 {
@@ -18,6 +22,9 @@ namespace Yuna
 
         public Bot()
         {
+            AnsiConsole.Write(new FigletText("Music Bot").Centered().Color(Color.DodgerBlue2));
+
+
             _client = new DiscordSocketClient(new DiscordSocketConfig()
             {
                 LogLevel = Discord.LogSeverity.Debug,

@@ -25,7 +25,7 @@ namespace Yuna.Services.Player
                 }
                 await node.LeaveAsync(player.VoiceChannel);
 
-                await LogService.LogInfoAsync("MUSIC", $"Yuna has left.");
+                LoggingService.Log($"Music bot has left", Spectre.Console.Color.Gold1, true);
                 return await EmbedHandler.BasicEmbed("🚫 Music", $"I've left.", Color.Red);
             }
             catch (InvalidOperationException ex)

@@ -20,7 +20,7 @@ namespace Yuna.Services.Player
             try
             {
                 var trackToRemove = player.Vueue.RemoveAt(index);
-                await LogService.LogInfoAsync("MUSIC", $"Removed {trackToRemove.Title} from queue");
+                LoggingService.Log($"Removed {trackToRemove.Title} from queue", Spectre.Console.Color.Gold1, true);
                 return await EmbedHandler.BasicEmbed("", $"❌ Removed \"{trackToRemove.Title}\" from queue.", Color.Default);
             }
             catch (Exception ex)

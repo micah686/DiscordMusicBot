@@ -32,7 +32,7 @@ namespace Yuna.Modules
                 const int delay = 2000;
                 var m = await ReplyAsync(
                     embed: await EmbedHandler.BasicEmbed("Cleaning is complete.", $"{num} have been deleted.", Color.Green));
-                await LogService.LogInfoAsync("CLEAN", $"{num} messages have been deleted!");
+                LoggingService.Log($"(CLEAN) {num} messages have been deleted!", Spectre.Console.Color.Gold1);
                 await Task.Delay(delay);
                 await m.DeleteAsync();
             }

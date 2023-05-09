@@ -65,12 +65,12 @@ namespace Yuna.Services.Player
                     if (player.Track != null && player.PlayerState is PlayerState.Playing || player.PlayerState is PlayerState.Paused)
                     {
                         player.Vueue.Enqueue(track);
-                        await LogService.LogInfoAsync("MUSIC", $"\"{track.Title}\" has been added to the music queue.");
+                        LoggingService.Log($"\"{track.Title}\" has been added to the music queue", Spectre.Console.Color.Gold1, true);
                         return await EmbedHandler.BasicEmbed("🎵 Music", $"\"{track.Title}\" has been added to the music queue.", Color.Green);
                     }
 
                     await player.PlayAsync(track);
-                    await LogService.LogInfoAsync("MUSIC", $"Yuna Now Playing: {track.Title}\nUrl: {track.Url}");
+                    LoggingService.Log($"Now Playing: {track.Title}\nUrl: {track.Url}", Spectre.Console.Color.Gold1, true);
                     return await EmbedHandler.BasicEmbed("🎵 Music", $"Now Playing: \"{track.Title}\"\nAuthor: {track.Author}\nUrl: {track.Url}", Color.Green);
                 }
             }

@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Yuna.Services;
+using Spectre.Console;
 
 namespace Yuna.Managers
 {
@@ -18,15 +20,16 @@ namespace Yuna.Managers
 
         public static Task LoadCommands()
         {
+
             _client.Log += message =>
             {
-                Console.WriteLine($"[{DateTime.Now}]\t({message.Source})\t({message.Message})");
+                LoggingService.Log($"({message.Source})\t{message.Message}", message.Severity);
                 return Task.CompletedTask;
             };
 
             _commandService.Log += message =>
             {
-                Console.WriteLine($"[{DateTime.Now}]\t({message.Source})\t({message.Message})");
+                LoggingService.Log($"({message.Source})\t{message.Message}", message.Severity);
                 return Task.CompletedTask;
             };
 
@@ -38,7 +41,7 @@ namespace Yuna.Managers
 
         private async static Task OnMessageRecieved(SocketMessage arg)
         {
-            Console.WriteLine($"[{DateTime.Now}]\t{arg.ToString()}");
+            LoggingService.Log(arg.ToString());
             var argPos = 0;
             var message = arg as SocketUserMessage;
             var context = new SocketCommandContext(_client, message);
@@ -67,7 +70,15 @@ namespace Yuna.Managers
                 throw;
             }
 
-            Console.WriteLine($"[{DateTime.Now}]\t(READY)\tBot is ready");
+            var topCanvas = new Canvas(Console.WindowWidth, 2);
+            for (var i = 0; i < topCanvas.Width; i++) { topCanvas.SetPixel(i, 0, Spectre.Console.Color.Green4); }
+            AnsiConsole.Write(topCanvas);
+            AnsiConsole.Write(new FigletText("Ready").Centered().Color(Spectre.Console.Color.Green));
+            var bottomCanvas = new Canvas(Console.WindowWidth, 4);
+            for (var i = 0; i < bottomCanvas.Width; i++) { bottomCanvas.SetPixel(i, 0, Spectre.Console.Color.Green4); }
+            AnsiConsole.Write(bottomCanvas);
+
+
             await _client.SetStatusAsync(Discord.UserStatus.Online);
             await _client.SetGameAsync($"Prefix: {ConfigManager.BotConfig.Prefix}", null, ActivityType.Listening);
         }

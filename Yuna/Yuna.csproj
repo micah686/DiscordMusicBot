@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
     <PackageReference Include="SecureStore" Version="1.1.0" />
+    <PackageReference Include="Spectre.Console" Version="0.46.1-preview.0.20" />
     <PackageReference Include="Victoria" Version="6.0.1026" />
   </ItemGroup>
 

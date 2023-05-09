@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Yuna.Services;
 
 namespace Yuna.Managers
 {
@@ -18,7 +19,7 @@ namespace Yuna.Managers
 
             foreach (var command in _commandService.Commands)
             {
-                Console.WriteLine($"Command {command.Name} was loaded");
+                LoggingService.Log($"Command {command.Name} was loaded");
             }
         }
     }

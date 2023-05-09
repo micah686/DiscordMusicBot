@@ -24,7 +24,7 @@ namespace Yuna.Services.Player
                     player.Vueue.Clear();
                     await player.StopAsync();
                 }
-                await LogService.LogInfoAsync("MUSIC", $"Yuna has stopped playback.");
+                LoggingService.Log($"Music bot has stopped playback", Spectre.Console.Color.Gold1, true);
                 return await EmbedHandler.BasicEmbed("", "⏹️ I have stopped playback & the playlist has been cleared.", Color.Default);
             }
             catch (Exception ex)
