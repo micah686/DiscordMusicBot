@@ -11,8 +11,5 @@
         public static readonly string EMOJI_X = "❌";
         public static readonly string EMOJI_SHUFFLE = "🔀";
         public static readonly string EMOJI_LOOP = "🔂";
-
-
-        internal const string LAUNCHSTATE_FILE = "launchstate";
     }
 }

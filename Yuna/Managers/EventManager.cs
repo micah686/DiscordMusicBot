@@ -132,48 +132,19 @@ namespace Yuna.Managers
 
             _handler += new EventHandler(Handler);
             SetConsoleCtrlHandler(_handler, true);
-
-            //if (File.Exists(Constants.LAUNCHSTATE_FILE) && File.ReadAllBytes(Constants.LAUNCHSTATE_FILE).SequenceEqual(Constants.START_BYTES))
-            //{
-            //    LoggingService.Log("Previous exit was unclean.", LogSeverity.Warning);
-            //}
-            //File.WriteAllBytes(Constants.LAUNCHSTATE_FILE, Constants.START_BYTES);
-
-
-
-            _client.UserVoiceStateUpdated += _client_UserVoiceStateUpdated;
-
-            var entries = _client.GetGuild(151508131476799489).GetVoiceChannel(1104947439502360576).ConnectedUsers.ToList();
-            var prevBotInstance = entries.Where(x => x.Id == _client.CurrentUser.Id).FirstOrDefault();
-            if(prevBotInstance != null)
-            {
-                var sessionId = prevBotInstance.VoiceSessionId;
-                Trace.WriteLine($"old session ID:{sessionId}");                   
-            }
-        }
-
-        private static Task _client_UserVoiceStateUpdated(SocketUser user, SocketVoiceState prevChannel, SocketVoiceState currentChannel)
-        {
             
-            if(user.Id == _client.CurrentUser.Id)
-            {
-                var voiceState = user as SocketGuildUser;
-                var voiceSessionId = voiceState.VoiceSessionId;
-                Trace.WriteLine($"new session ID:{voiceSessionId}");
-                
-            }
-            return Task.CompletedTask;
         }
+        
 
         private static async Task CleanupAndExit()
-        {            
+        {
+            LoggingService.Log($"Preparing to clean up and exit", Spectre.Console.Color.Gold1, true);
             var context = AudioModule.Instance.GetDiscordContext();
             _lavaNode.TryGetPlayer(context.Item1, out var player);
             await _lavaNode.LeaveAsync(player.VoiceChannel);
             var embedLeave = await EmbedHandler.BasicEmbed("🚫 Music", $"I've left.", Discord.Color.Red);
             await _client.GetGuild(context.Item1.Id).GetTextChannel(context.Item2.Id).SendMessageAsync(embed: embedLeave);
             LoggingService.Log($"Music bot has left", Spectre.Console.Color.Gold1, true);
-            //File.WriteAllBytes(Constants.LAUNCHSTATE_FILE, Constants.END_BYTES);
             LoggingService.Log($"Finished cleaning up. Bot will now exit", Spectre.Console.Color.Gold1, true);
         }        
     }
