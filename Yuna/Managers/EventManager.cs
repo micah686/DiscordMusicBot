@@ -150,7 +150,6 @@ namespace Yuna.Managers
                 var sessionId = prevBotInstance.VoiceSessionId;
                 Trace.WriteLine($"old session ID:{sessionId}");                   
             }
-            var context = AudioModule.Instance.GetDiscordContext();
         }
 
         private static Task _client_UserVoiceStateUpdated(SocketUser user, SocketVoiceState prevChannel, SocketVoiceState currentChannel)

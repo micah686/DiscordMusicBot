@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using Yuna.Handlers;
+using Yuna.Modules;
 
 namespace Yuna.Services.Player
 {
@@ -23,6 +24,8 @@ namespace Yuna.Services.Player
                     //clear any endless, loop, repeat,... states here
                     player.Vueue.Clear();
                     await player.StopAsync();
+                    AudioModule.CurrentTrack = null;
+                    AudioModule.LoopEnabled = false;
                 }
                 LoggingService.Log($"Music bot has stopped playback", Spectre.Console.Color.Gold1, true);
                 return await EmbedHandler.BasicEmbed("", "⏹️ I have stopped playback & the playlist has been cleared.", Color.Default);

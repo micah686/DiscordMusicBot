@@ -3,6 +3,8 @@ using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 
@@ -10,19 +12,36 @@ namespace Yuna.Modules
 {
     public class AudioModule : ModuleBase<SocketCommandContext>
     {
-        
-        
+
         private readonly LavaNode _lavaNode;
+        public static bool LoopEnabled { get; set; } = false;
+        public static LavaTrack CurrentTrack { get; set; }
+        public static AudioModule Instance { get; private set; }
         public AudioModule(LavaNode lavaNode)
         {
             _lavaNode = lavaNode;
             Instance = this;
+            _lavaNode.OnTrackEnd += _lavaNode_OnTrackEnd;
+
         }
 
-        public static bool LoopEnabled { get; set; } = false;
-        public static LavaTrack CurrentTrack { get; set; }
-        public static AudioModule Instance { get; private set; }
-        
+        private Task _lavaNode_OnTrackEnd(Victoria.Node.EventArgs.TrackEndEventArg<LavaPlayer<LavaTrack>, LavaTrack> arg)
+        {
+            if (LoopEnabled && arg.Player.Track == null && CurrentTrack != null)
+            {
+                arg.Player.PlayAsync(CurrentTrack);
+                return Task.CompletedTask;
+            }
+
+            var areMoreTracks = arg.Player.Vueue.TryDequeue(out var nextTrack);
+            if (areMoreTracks)
+            {
+                arg.Player.PlayAsync(nextTrack);
+            }
+
+            return Task.CompletedTask;
+        }
+                
         public Tuple<IGuild, ITextChannel, IVoiceState> GetDiscordContext()
         {
             try
@@ -61,7 +80,7 @@ namespace Yuna.Modules
         #region Loop
         [Command("loop", RunMode = RunMode.Async)]
         [Name("Loop"), Summary("Loops the current track.")]
-        public async Task Loop() => await PlayerLoop.LoopAsync(_lavaNode, Context.Guild);
+        public async Task Loop() => await ReplyAsync(embed: await PlayerLoop.LoopAsync(_lavaNode, Context.Guild));
         #endregion
 
         #region Move
