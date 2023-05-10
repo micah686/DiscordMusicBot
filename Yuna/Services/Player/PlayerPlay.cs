@@ -28,10 +28,11 @@ namespace Yuna.Services.Player
             {
                 node.TryGetPlayer(guild, out var player);
 
-                //var search = Uri.IsWellFormedUriString(query, UriKind.Absolute) ?
-                //await node.SearchAsync(SearchType.Direct,query)
-                //    : await node.SearchAsync(SearchType.YouTube,query);
-                var search = await node.SearchAsync(SearchType.Direct, query);
+                var isUrl = Uri.IsWellFormedUriString(query, UriKind.Absolute);
+                var isFile = new Uri(query).IsFile;
+                var validLocation = isUrl || isFile;
+                var search = validLocation ? await node.SearchAsync(SearchType.Direct, query)
+                    : await node.SearchAsync(SearchType.YouTube, query);
                 
                 if (search.Status == SearchStatus.NoMatches)
                 {
