@@ -154,6 +154,7 @@ namespace Yuna.Managers
 
         private static Task _client_UserVoiceStateUpdated(SocketUser user, SocketVoiceState prevChannel, SocketVoiceState currentChannel)
         {
+            
             if(user.Id == _client.CurrentUser.Id)
             {
                 var voiceState = user as SocketGuildUser;
