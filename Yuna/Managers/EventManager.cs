@@ -133,11 +133,11 @@ namespace Yuna.Managers
             _handler += new EventHandler(Handler);
             SetConsoleCtrlHandler(_handler, true);
 
-            if (File.Exists(Constants.LAUNCHSTATE_FILE) && File.ReadAllBytes(Constants.LAUNCHSTATE_FILE).SequenceEqual(Constants.START_BYTES))
-            {
-                LoggingService.Log("Previous exit was unclean.", LogSeverity.Warning);
-            }
-            File.WriteAllBytes(Constants.LAUNCHSTATE_FILE, Constants.START_BYTES);
+            //if (File.Exists(Constants.LAUNCHSTATE_FILE) && File.ReadAllBytes(Constants.LAUNCHSTATE_FILE).SequenceEqual(Constants.START_BYTES))
+            //{
+            //    LoggingService.Log("Previous exit was unclean.", LogSeverity.Warning);
+            //}
+            //File.WriteAllBytes(Constants.LAUNCHSTATE_FILE, Constants.START_BYTES);
 
 
 
@@ -154,6 +154,7 @@ namespace Yuna.Managers
 
         private static Task _client_UserVoiceStateUpdated(SocketUser user, SocketVoiceState prevChannel, SocketVoiceState currentChannel)
         {
+            
             if(user.Id == _client.CurrentUser.Id)
             {
                 var voiceState = user as SocketGuildUser;
@@ -172,7 +173,7 @@ namespace Yuna.Managers
             var embedLeave = await EmbedHandler.BasicEmbed("🚫 Music", $"I've left.", Discord.Color.Red);
             await _client.GetGuild(context.Item1.Id).GetTextChannel(context.Item2.Id).SendMessageAsync(embed: embedLeave);
             LoggingService.Log($"Music bot has left", Spectre.Console.Color.Gold1, true);
-            File.WriteAllBytes(Constants.LAUNCHSTATE_FILE, Constants.END_BYTES);
+            //File.WriteAllBytes(Constants.LAUNCHSTATE_FILE, Constants.END_BYTES);
             LoggingService.Log($"Finished cleaning up. Bot will now exit", Spectre.Console.Color.Gold1, true);
         }        
     }
