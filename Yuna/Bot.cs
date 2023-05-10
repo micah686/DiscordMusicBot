@@ -11,6 +11,7 @@ using Spectre.Console;
 using System;
 using Yuna.Services;
 using Color = Spectre.Console.Color;
+using System.Threading;
 
 namespace Yuna
 {
@@ -65,7 +66,10 @@ namespace Yuna
             await _client.LoginAsync(TokenType.Bot, ConfigManager.GetTokenInsecure());
             await _client.StartAsync();
 
-            await Task.Delay(-1);
+            while (!EventManager.exitSystem)
+            {
+                Thread.Sleep(500);
+            }
         }
     }
 }

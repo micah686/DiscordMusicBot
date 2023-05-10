@@ -13,6 +13,9 @@ using System.Xml.Linq;
 using Yuna.Modules;
 using Yuna.Handlers;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Diagnostics;
 
 namespace Yuna.Managers
 {
@@ -21,7 +24,47 @@ namespace Yuna.Managers
         private static LavaNode _lavaNode = ServiceManager.Provider.GetRequiredService<LavaNode>();
         private static DiscordSocketClient _client = ServiceManager.GetService<DiscordSocketClient>();
         private static CommandService _commandService = ServiceManager.GetService<CommandService>();
-        private static bool _closing = false;
+
+        internal static bool exitSystem = false;
+
+        #region Trap application termination
+        [DllImport("Kernel32")]
+        private static extern bool SetConsoleCtrlHandler(EventHandler handler, bool add);
+
+        private delegate bool EventHandler(CtrlType sig);
+        static EventHandler _handler;
+
+        enum CtrlType
+        {
+            CTRL_C_EVENT = 0,
+            CTRL_BREAK_EVENT = 1,
+            CTRL_CLOSE_EVENT = 2,
+            CTRL_LOGOFF_EVENT = 5,
+            CTRL_SHUTDOWN_EVENT = 6
+        }
+
+        private static bool Handler(CtrlType sig)
+        {
+            Console.WriteLine("Exiting system due to external CTRL-C, or process kill, or shutdown");
+
+            CleanupAndExit();
+            //do your cleanup here
+            Thread.Sleep(5000); //simulate some cleanup delay
+
+            Console.WriteLine("Cleanup complete");
+
+            //allow main to run off
+            exitSystem = true;
+
+            //shutdown right away so there are no lingering threads
+            Environment.Exit(-1);
+
+            return true;
+        }
+        #endregion
+
+
+
 
         public static Task LoadCommands()
         {
@@ -87,41 +130,51 @@ namespace Yuna.Managers
             await _client.SetStatusAsync(Discord.UserStatus.Online);
             await _client.SetGameAsync($"Prefix: {ConfigManager.BotConfig.Prefix}", null, ActivityType.Listening);
 
-            Console.CancelKeyPress += (s, e) => BotExit(e);
-            AppDomain.CurrentDomain.ProcessExit +=  (s, e) =>  BotExit(e);
+            _handler += new EventHandler(Handler);
+            SetConsoleCtrlHandler(_handler, true);
 
-            if(File.Exists(Constants.LAUNCHSTATE_FILE) && File.ReadAllBytes(Constants.LAUNCHSTATE_FILE).SequenceEqual(Constants.START_BYTES))
+            if (File.Exists(Constants.LAUNCHSTATE_FILE) && File.ReadAllBytes(Constants.LAUNCHSTATE_FILE).SequenceEqual(Constants.START_BYTES))
             {
                 LoggingService.Log("Previous exit was unclean.", LogSeverity.Warning);
             }
             File.WriteAllBytes(Constants.LAUNCHSTATE_FILE, Constants.START_BYTES);
+
+
+
+            _client.UserVoiceStateUpdated += _client_UserVoiceStateUpdated;
+
+            var entries = _client.GetGuild(151508131476799489).GetVoiceChannel(1104947439502360576).ConnectedUsers.ToList();
+            var prevBotInstance = entries.Where(x => x.Id == _client.CurrentUser.Id).FirstOrDefault();
+            if(prevBotInstance != null)
+            {
+                var sessionId = prevBotInstance.VoiceSessionId;
+                Trace.WriteLine($"old session ID:{sessionId}");                   
+            }
+            var context = AudioModule.Instance.GetDiscordContext();
         }
 
-
-        private static void BotExit(EventArgs e)
+        private static Task _client_UserVoiceStateUpdated(SocketUser user, SocketVoiceState prevChannel, SocketVoiceState currentChannel)
         {
-           if(_closing) return;
-            try
+            if(user.Id == _client.CurrentUser.Id)
             {
-                _closing = true;
-                var context = AudioModule.Instance.GetDiscordContext();
-                                
-                _lavaNode.TryGetPlayer(context.Item1, out var player);
-                Task.Run(() => { _lavaNode.LeaveAsync(player.VoiceChannel); });
-
-                var embedLeave = EmbedHandler.BasicEmbed("🚫 Music", $"I've left.", Discord.Color.Red).Result;
-                Task.Run(() => { _client.GetGuild(context.Item1.Id).GetTextChannel(context.Item2.Id).SendMessageAsync(embed: embedLeave); });                                
-                LoggingService.Log($"Music bot has left", Spectre.Console.Color.Gold1, true);
-                File.WriteAllBytes(Constants.LAUNCHSTATE_FILE, Constants.END_BYTES);
+                var voiceState = user as SocketGuildUser;
+                var voiceSessionId = voiceState.VoiceSessionId;
+                Trace.WriteLine($"new session ID:{voiceSessionId}");
+                
             }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-
-            
-            Environment.Exit(0);
+            return Task.CompletedTask;
         }
+
+        private static async Task CleanupAndExit()
+        {            
+            var context = AudioModule.Instance.GetDiscordContext();
+            _lavaNode.TryGetPlayer(context.Item1, out var player);
+            await _lavaNode.LeaveAsync(player.VoiceChannel);
+            var embedLeave = await EmbedHandler.BasicEmbed("🚫 Music", $"I've left.", Discord.Color.Red);
+            await _client.GetGuild(context.Item1.Id).GetTextChannel(context.Item2.Id).SendMessageAsync(embed: embedLeave);
+            LoggingService.Log($"Music bot has left", Spectre.Console.Color.Gold1, true);
+            File.WriteAllBytes(Constants.LAUNCHSTATE_FILE, Constants.END_BYTES);
+            LoggingService.Log($"Finished cleaning up. Bot will now exit", Spectre.Console.Color.Gold1, true);
+        }        
     }
 }
