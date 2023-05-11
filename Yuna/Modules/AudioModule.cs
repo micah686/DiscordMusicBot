@@ -143,85 +143,10 @@ namespace Yuna.Modules
         [Name("Search"), Summary("Searches online for tracks matching the query")]
         public async Task Search([Remainder] string search)
         {
-            _client.ReactionAdded += _client_ReactionAdded;
+            //_client.ReactionAdded += _client_ReactionAdded;
+            _client.ReactionAdded += (msg, channel, reaction) => PlayerSearch.ClientReactionAdded(msg, channel, reaction, _lavaNode);
             var msg = await ReplyAsync(embed: await PlayerSearch.SearchAsync(_lavaNode, Context.User as SocketGuildUser, Context.Guild, Context.User as IVoiceState, Context.Channel as ITextChannel, search));
             await PlayerSearch.AddReactions(msg);
-        }
-
-        private async Task _client_ReactionAdded(Cacheable<IUserMessage, ulong> message, Cacheable<IMessageChannel, ulong> messageChannel, SocketReaction reaction)
-        {
-            var channel = await messageChannel.GetOrDownloadAsync();
-
-            if (channel is not IGuildChannel guildChannel)
-            {
-                return;
-            }
-            var msg = await message.GetOrDownloadAsync();
-
-            if (!PlayerSearch.EmojiList.Contains(reaction.Emote))
-            {
-                await Task.CompletedTask;
-                return;
-            }
-
-            _ = Task.Run(async () =>
-            {
-                PlayerSearch.EmojiStates currentState = (PlayerSearch.EmojiStates)Array.IndexOf(PlayerSearch.EmojiList, reaction.Emote);
-
-                if (reaction.UserId == _client.CurrentUser.Id)
-                {
-                    await Task.CompletedTask;
-                    return;
-                }
-                await msg.RemoveReactionAsync(reaction.Emote, reaction.User.Value, options: new RequestOptions { RetryMode = RetryMode.RetryRatelimit });
-
-                try
-                {
-                    if (!_lavaNode.HasPlayer(guildChannel.Guild))
-                    {
-                        return;
-                    }
-                }
-                catch
-                {
-                    var error = await EmbedHandler.ErrorEmbed($"Couldn't find Server/Channel");
-                    await channel.SendMessageAsync(embed: error);
-                }
-
-                _lavaNode.TryGetPlayer(guildChannel.Guild, out var player);
-
-                if (!(player.PlayerState is PlayerState.Playing or PlayerState.Paused))
-                {
-                    return;
-                }
-
-                switch (currentState)
-                {
-                    case PlayerSearch.EmojiStates.One:
-                        break;
-                    case PlayerSearch.EmojiStates.Two:
-                        break;
-                    case PlayerSearch.EmojiStates.Three:
-                        await player.PlayAsync(PlayerSearch.LavaTrackList[3]);
-                        break;
-                    case PlayerSearch.EmojiStates.Four:
-                        break;
-                    case PlayerSearch.EmojiStates.Five:
-                        break;
-                    case PlayerSearch.EmojiStates.Six:
-                        break;
-                    case PlayerSearch.EmojiStates.Seven:
-                        break;
-                    case PlayerSearch.EmojiStates.Eight:
-                        break;
-                    case PlayerSearch.EmojiStates.Nine:
-                        break;
-                    case PlayerSearch.EmojiStates.Ten:
-                        break;
-                    default:
-                        break;
-                }
-            });
         }
         #endregion
 

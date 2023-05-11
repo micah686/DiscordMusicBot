@@ -8,6 +8,8 @@ using System.Text;
 using System.Linq;
 using Yuna.Modules;
 using System.Collections.Generic;
+using Victoria.Node;
+using Yuna.Managers;
 
 namespace Yuna.Services.Player
 {
@@ -52,7 +54,7 @@ namespace Yuna.Services.Player
                 }
 
                 
-                return await EmbedHandler.BasicEmbed("🎶 Playlist", descriptionBuilder.ToString(), Color.Default);
+                return await EmbedHandler.BasicEmbed("🎶 Search", descriptionBuilder.ToString(), Color.Default);
 
             }
             return await EmbedHandler.BasicEmbed("", $"Searched ", Color.Green);
@@ -80,6 +82,101 @@ namespace Yuna.Services.Player
                 throw;
             }
         }
-        
+
+
+        public static async Task ClientReactionAdded(Cacheable<IUserMessage, ulong> message, Cacheable<IMessageChannel, ulong> messageChannel, SocketReaction reaction, LavaNode node)
+        {
+            try
+            {
+                var channel = await messageChannel.GetOrDownloadAsync();
+
+                if (channel is not IGuildChannel guildChannel)
+                {
+                    return;
+                }
+                var msg = await message.GetOrDownloadAsync();
+
+                if (!EmojiList.Contains(reaction.Emote))
+                {
+                    await Task.CompletedTask;
+                    return;
+                }
+
+                _ = Task.Run(async () =>
+                {
+                    EmojiStates currentState = (EmojiStates)Array.IndexOf(EmojiList, reaction.Emote);
+
+                    if (reaction.UserId == ConfigManager.BotConfig.BotUserId)
+                    {
+                        await Task.CompletedTask;
+                        return;
+                    }
+                    await msg.RemoveReactionAsync(reaction.Emote, reaction.User.Value, options: new RequestOptions { RetryMode = RetryMode.RetryRatelimit });
+
+                    try
+                    {
+                        if (!node.HasPlayer(guildChannel.Guild))
+                        {
+                            return;
+                        }
+                    }
+                    catch
+                    {
+                        var error = await EmbedHandler.ErrorEmbed($"Couldn't find Server/Channel");
+                        await channel.SendMessageAsync(embed: error);
+                    }
+
+                    node.TryGetPlayer(guildChannel.Guild, out var player);
+
+                    if (!(player.PlayerState is PlayerState.Playing or PlayerState.Paused))
+                    {
+                        return;
+                    }
+
+                    switch (currentState)
+                    {
+                        case EmojiStates.One:
+                            await player.PlayAsync(LavaTrackList[0]);
+                            break;
+                        case EmojiStates.Two:
+                            await player.PlayAsync(LavaTrackList[1]);
+                            break;
+                        case EmojiStates.Three:
+                            await player.PlayAsync(LavaTrackList[2]);
+                            break;
+                        case EmojiStates.Four:
+                            await player.PlayAsync(LavaTrackList[3]);
+                            break;
+                        case EmojiStates.Five:
+                            await player.PlayAsync(LavaTrackList[4]);
+                            break;
+                        case EmojiStates.Six:
+                            await player.PlayAsync(LavaTrackList[5]);
+                            break;
+                        case EmojiStates.Seven:
+                            await player.PlayAsync(LavaTrackList[6]);
+                            break;
+                        case EmojiStates.Eight:
+                            await player.PlayAsync(LavaTrackList[7]);
+                            break;
+                        case EmojiStates.Nine:
+                            await player.PlayAsync(LavaTrackList[8]);
+                            break;
+                        case EmojiStates.Ten:
+                            await player.PlayAsync(LavaTrackList[9]);
+                            break;
+                        default:
+                            break;
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+        }
+
     }
 }
