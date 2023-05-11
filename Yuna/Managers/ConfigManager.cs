@@ -82,6 +82,7 @@ namespace Yuna.Managers
         public string Token { get; set; }
         public char Prefix { get; set; }
         public ulong ServerGuild { get; set; }
+        public ulong ChannelId { get; set; }
         public ulong BotUserId { get; set;}
     }
 }

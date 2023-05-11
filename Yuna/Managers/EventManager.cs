@@ -139,11 +139,14 @@ namespace Yuna.Managers
         private static async Task CleanupAndExit()
         {
             LoggingService.Log($"Preparing to clean up and exit", Spectre.Console.Color.Gold1, true);
-            var context = AudioModule.Instance.GetDiscordContext();
-            _lavaNode.TryGetPlayer(context.Item1, out var player);
-            await _lavaNode.LeaveAsync(player.VoiceChannel);
-            var embedLeave = await EmbedHandler.BasicEmbed("🚫 Music", $"I've left.", Discord.Color.Red);
-            await _client.GetGuild(context.Item1.Id).GetTextChannel(context.Item2.Id).SendMessageAsync(embed: embedLeave);
+            var isConnected = _lavaNode.TryGetPlayer(_client.GetGuild(ConfigManager.BotConfig.ServerGuild), out var player);
+            if(isConnected)
+            {
+                await _lavaNode.LeaveAsync(player.VoiceChannel);
+                var embedLeave = await EmbedHandler.BasicEmbed("🚫 Music", $"I've left.", Discord.Color.Red);
+                await _client.GetGuild(ConfigManager.BotConfig.ServerGuild).GetTextChannel(ConfigManager.BotConfig.ChannelId).SendMessageAsync(embed: embedLeave);
+            }
+            
             LoggingService.Log($"Music bot has left", Spectre.Console.Color.Gold1, true);
             LoggingService.Log($"Finished cleaning up. Bot will now exit", Spectre.Console.Color.Gold1, true);
         }        
