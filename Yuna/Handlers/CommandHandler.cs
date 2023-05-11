@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using Yuna.Data;
 using Yuna.Managers;
 
 namespace Yuna.Handlers

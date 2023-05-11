@@ -2,7 +2,6 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using System.Threading.Tasks;
-using Yuna.Data;
 using Yuna.Handlers;
 using Yuna.Managers;
 

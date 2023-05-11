@@ -39,9 +39,6 @@ namespace Yuna.Managers
             {
                 Prefix = '-',
                 Token = TokenUnset,
-                LavalinkHost = "localhost",
-                LavalinkPassword = "lavalink password",
-                LavalinkPort = 2333
             };
             File.WriteAllText(ConfigName, JsonConvert.SerializeObject(config, Formatting.Indented));
         }
@@ -84,8 +81,7 @@ namespace Yuna.Managers
     {
         public string Token { get; set; }
         public char Prefix { get; set; }
-        public string LavalinkHost { get; init; }
-        public ushort LavalinkPort { get; init; }
-        public string LavalinkPassword { get; init; }
+        public ulong ServerGuild { get; set; }
+        public ulong BotUserId { get; set;}
     }
 }
