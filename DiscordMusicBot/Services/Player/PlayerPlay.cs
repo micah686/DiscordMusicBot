@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Yuna.Handlers;
 using Victoria.Responses.Search;
 using Yuna.Modules;
+using System.IO;
 
 namespace Yuna.Services.Player
 {
@@ -29,7 +30,7 @@ namespace Yuna.Services.Player
                 node.TryGetPlayer(guild, out var player);
 
                 var isUrl = Uri.IsWellFormedUriString(query, UriKind.Absolute);
-                var isFile = new Uri(query).IsFile;
+                var isFile = File.Exists(query);
                 var validLocation = isUrl || isFile;
                 var search = validLocation ? await node.SearchAsync(SearchType.Direct, query)
                     : await node.SearchAsync(SearchType.YouTube, query);

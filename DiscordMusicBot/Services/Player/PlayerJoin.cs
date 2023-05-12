@@ -33,7 +33,7 @@ namespace Yuna.Services.Player
             }
             catch (Exception ex)
             {
-                return await EmbedHandler.ErrorEmbed(ex.Message);
+                return await EmbedHandler.ErrorEmbed($"{ex.Message}\nIs Lavalink running?");
             }
         }
     }
