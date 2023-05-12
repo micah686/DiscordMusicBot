@@ -1,12 +1,10 @@
-# Yuna - Discord Bot
+# DiscordMusicBot - A bot based off of Yuna
 
 A Small Discord Music Bot Built For Medium Servers.
 
 ## Built With
 
-* [Discord.Net (Version - 2.4.0)](https://github.com/RogueException/Discord.Net) - The API wrapper for Discord.
-* [DotNet Core (Version - 2.4.0)](https://dotnet.microsoft.com/download/dotnet-core/2.2) - Dotnet version.
-* [Victoria (Version - 5.1.9)](https://github.com/Yucked/Victoria) - LavaLink wrapper for Discord.Net.
+
 
 ## Musical Features
 
@@ -15,10 +13,16 @@ A Small Discord Music Bot Built For Medium Servers.
 * Remove a specific track from playlist.
 * Pause and resume the current track.
 * Bot volume control (from 0 to 150).
+* Search for a particular track
+* Move a track in the playlist
 
 ## Other Features
 
 * Delete messages in a channel.
+* Secure Discord Token (NEW!)
+
+The discord token is now secured/encypted once set, so there is a much lower chance of leaking your discord token.
+This is done with NeoSmart's SecureStore library.
 
 ## Supporting languages
 
