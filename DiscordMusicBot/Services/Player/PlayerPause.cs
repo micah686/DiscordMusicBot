@@ -1,7 +1,9 @@
 ﻿using Discord;
+using Spectre.Console;
 using System;
 using System.Threading.Tasks;
 using Yuna.Handlers;
+using Color = Discord.Color;
 
 namespace Yuna.Services.Player
 {
@@ -24,7 +26,7 @@ namespace Yuna.Services.Player
                 }
 
                 await player.PauseAsync();
-                return await EmbedHandler.BasicEmbed("", $"⏸️ **Paused:** {player.Track.Title}", Color.Default);
+                return await EmbedHandler.BasicEmbed("", $"⏸️ **Paused:** {player.Track.Title.EscapeMarkup()}", Color.Default);
             }
             catch (InvalidOperationException ex)
             {

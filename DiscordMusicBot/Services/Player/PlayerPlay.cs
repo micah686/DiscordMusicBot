@@ -7,6 +7,8 @@ using Yuna.Handlers;
 using Victoria.Responses.Search;
 using Yuna.Modules;
 using System.IO;
+using Spectre.Console;
+using Color = Discord.Color;
 
 namespace Yuna.Services.Player
 {
@@ -70,12 +72,12 @@ namespace Yuna.Services.Player
                     if (player.Track != null && player.PlayerState is PlayerState.Playing || player.PlayerState is PlayerState.Paused)
                     {
                         player.Vueue.Enqueue(track);
-                        LoggingService.Log($"\"{track.Title}\" has been added to the music queue", Spectre.Console.Color.Gold1, true);
+                        LoggingService.Log($"\"{track.Title.EscapeMarkup()}\" has been added to the music queue", Spectre.Console.Color.Gold1, true);
                         return await EmbedHandler.BasicEmbed("🎵 Music", $"\"{track.Title}\" has been added to the music queue.", Color.Green);
                     }
 
                     await player.PlayAsync(track);
-                    LoggingService.Log($"Now Playing: {track.Title}\nUrl: {track.Url}", Spectre.Console.Color.Gold1, true);
+                    LoggingService.Log($"Now Playing: {track.Title.EscapeMarkup()}\nUrl: {track.Url}", Spectre.Console.Color.Gold1, true);
                     return await EmbedHandler.BasicEmbed("🎵 Music", $"Now Playing: \"{track.Title}\"\nAuthor: {track.Author}\nUrl: {track.Url}", Color.Green);                    
                 }
             }

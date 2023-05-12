@@ -1,7 +1,9 @@
 ﻿using Discord;
+using Spectre.Console;
 using System;
 using System.Threading.Tasks;
 using Yuna.Handlers;
+using Color = Discord.Color;
 
 namespace Yuna.Services.Player
 {
@@ -20,7 +22,7 @@ namespace Yuna.Services.Player
             try
             {
                 var trackToRemove = player.Vueue.RemoveAt(index);
-                LoggingService.Log($"Removed {trackToRemove.Title} from queue", Spectre.Console.Color.Gold1, true);
+                LoggingService.Log($"Removed {trackToRemove.Title.EscapeMarkup()} from queue", Spectre.Console.Color.Gold1, true);
                 return await EmbedHandler.BasicEmbed("", $"❌ Removed \"{trackToRemove.Title}\" from queue.", Color.Default);
             }
             catch (Exception ex)
